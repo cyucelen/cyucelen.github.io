@@ -1,0 +1,6 @@
+---
+title: Ara
+layout: search
+permalink: /search/
+sitemap: false
+---

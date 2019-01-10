@@ -1,0 +1,18 @@
+# Sample site navigation bar links
+
+- title: Anasayfa
+  url: /
+- title: Yazılar
+  url: /posts/
+- title: Kategoriler
+  url: /categories/
+- title: Etiketler
+  url: /tags/
+# - title: Recipes
+#   url: /recipes/
+- title: Ara
+  url: /search/
+- title: Hakkımda
+  url: /about/
+# - title: External Page
+#   url: https://the-page.com/you-want-to-link-to.html

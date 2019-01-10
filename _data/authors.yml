@@ -1,0 +1,11 @@
+# Sample Authors
+# Remove file or replace with your own
+
+Çağatay Yücelen:
+  name: Çağatay Yücelen
+  picture: /images/pp.jpg
+  twitter: "@yucelencagatay"
+  links:
+    - title: Twitter
+      url: https://twitter.com/yucelencagatay
+      icon: fab fa-twitter-square
