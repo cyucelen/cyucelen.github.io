@@ -25,6 +25,11 @@ amcanın verdiği postaneye mektup yazmalarını ve altına imza atmalarını is
 hangi mektubun oğlunun olduğunu anlamak için mektuplardaki imzalar ile evde bulduğu oğlunun imzasını karşılaştıracaktır. Bir hafta içerisinde Mehmet amcaya,
 2139 tane mektup gelir ve Mehmet amca o mektuplar arasından oğlunun mektubunu *unique* imzası sayesinde bulur. ***MUTLU SON***
 
+# Nedir bu JWT?
+
+JWT aslında JWS(JSON Web Signature) ve JWE(JSON Web Encryption)'yi kapsayan şemsiye bir terim. JWT'yi bir abstract class olarak düşünebilirsiniz. JWS ve JWE, JWT'nin uygulama
+biçimleridir. Bu yazıda JWT adı altında bahsettiğim her şeyde aslında JWS'yi anlatıyor olacağım. Encryption kısmını ise belki başka bir yazıda ele alırım. 
+
 # JWT'nin yapısı
 
 Bir JWT, Header, Payload ve Signature olmak üzere 3 kısımdan oluşuyor. 
