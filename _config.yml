@@ -87,7 +87,7 @@ defaults:
 # Site Author
 author:
   name: Çağatay Yücelen
-  picture: /images/pp.jpg
+  # picture: /images/pp.jpg
   email:
   twitter: cagatayyucelen
   links:
