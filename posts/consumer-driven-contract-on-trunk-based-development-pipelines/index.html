@@ -1,0 +1,79 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<link rel=stylesheet type=text/css href=/css/style.css>
+<title> | Consumer Driven Contract testing on trunk based development pipelines using Pact</title>
+</head><body><div class="header container">
+<a class="logo-link noTransition" href=/>
+<div class=logo>
+<span class=logo-text>
+<span>a<span class=initial><span class="initial name-initial"><span>ç</span></span></span>ık<span class=initial></span><span class=dot>.</span>ka<span class=initial><span class="initial surname-initial">y</span></span>mak
+</span>
+</span>
+><span class=blinking-cursor>_ </span>
+</div>
+</a>
+</div>
+<div id=content-area class=container>
+<main id=main>
+<div class=post-container>
+<h1 class=post-title>Consumer Driven Contract testing on trunk based development pipelines using Pact</h1>
+<div class=post-date>Sun, Aug 22, 2021</div>
+<div class=post-content><p>Consumer driven contracts are more than a need for systems consisting of several different components which are connected to each other over a network (sounds familiar right? a.k.a. microservices).</p>
+<p>Usually, these services owned by different teams which are split by domains. By the number of services and the number of integration points among them grows, it becomes harder to keep track of API changes and requires cross domain communication for each change. For every API change request, different teams should handshake on new contract, and additionally should consider to not break other consumer contracts. Can you imagine how much time it requires and how error prone is this process just after several services?</p>
+<p>Consumer Driven Contract(CDC) testing steps in to automate this time consuming process and allow us to deliver faster.</p>
+<p>In this post, we’ll explain how to setup a continuous delivery pipeline with CDC tests using <a href=https://pact.io/>Pact</a> to deliver our services in confidence.</p>
+<h1 id=how-pact-works>How Pact works?</h1>
+<p>Pact consists of a central server which is called as <strong>broker</strong> to store and keep track of <strong>contract</strong> files between <strong>consumers</strong> and <strong>providers.</strong></p>
+<p>A <strong>consumer</strong>, as its name, is a service which consumes a <strong>provider</strong> which is another service which provides the expected functionality. In order to verify the compatibility of integration between consumers and providers, pact expects us to create <strong>contract</strong> files.</p>
+<p>Each consumer should create a contract file -<em>which is basically a json file</em>- specifying, given a request sent to specified provider, expected response fields, types, headers etc.</p>
+<p>Pact provides <a href=https://github.com/pact-foundation>tools</a> for several languages to generate this contract files over unit tests of your client functions. We call this step as <strong>consumer test.</strong></p>
+<p>After creating contract files, we are versioning them and publishing it to pact broker to test it against provider later on. When contract is published to broker, we are ready to test if our provider is really compatible with this contract or not. We call this step as <strong>provider test</strong>. In this step, all contracts belongs to the provider is fetched from broker and validated against provider service <strong>in isolation</strong>.</p>
+<blockquote>
+<h1 id=_what-do-you-mean-by-in-isolation_><em>What do you mean by “in isolation”?</em></h1>
+<p>We are mocking all dependencies of provider service in this step, because we only want to validate the contract not the functionality. And this is one of the very points where Pact shines. To validate the compatibility between services, we don’t need to spin up all services together, we don’t need to depend on test data, basically avoiding time consuming and brittle end-to-end tests.</p>
+</blockquote>
+<p>Provider test publishes the verification result back to broker to save it. By this way, we have all the compatibility matr between consumers and providers for each version of them. We can utilize this information to decide whether deploy the specific version consumer or not.</p>
+<h1 id=how-to-automate-this-process-correctly>How to automate this process correctly?</h1>
+<p>First of all, let’s define our goals:</p>
+<ul>
+<li>When consumer publishes a contract for a breaking change, <strong>we should break</strong> the consumer pipeline to prevent deployment. <em>Otherwise it will crash on runtime, since provider is not compatible with recently published contract.</em></li>
+<li>When consumer publishes a contract with no change or if provider still satisfies the contract, <strong>we should not break</strong> the consumer pipeline.</li>
+<li>When provider fails to satisfy any consumer contract, <strong>we should break</strong> the provider pipeline to prevent deployment.</li>
+<li>When provider satisfies all contracts, <strong>we should not break</strong> the provider pipeline.</li>
+<li>When consumer publishes a contract which is not compatible with the current version of provider, <strong>consumer pipeline</strong> <strong>should break</strong> before deployment but <strong>provider pipeline should not break</strong> for further commits. <em>Otherwise some other teams new contract which represents a consumer’s new version not yet deployed to anywhere will block provider pipeline for any further commits and this will prevent our team to develop any other feature or bug fix before satisfying other teams contract.</em></li>
+</ul>
+<p>We defined our test cases! Now, let’s try to design a pipeline which suits our needs to automate this process correctly.</p>
+<h1 id=design-of-the-pipelines>Design of the pipelines</h1>
+<p>There are ways of implementing this flow with feature branch approach, but in this section we will try to define a way to achieve same flow for <a href=https://trunkbaseddevelopment.com/>trunk based development.</a></p>
+<p>To keep it simple, following example will represent 1 consumer, 1 provider service and single environment to deploy but it works on any number of consumers and providers and environments.</p>
+<p><img src=https://miro.medium.com/max/1400/1*cIztAm6XsnAzubtEW8RHcA.png alt></p>
+<p>To elaborate the legend of the above diagram, let’s define what usual and trigger only pipeline means.</p>
+<p><strong>Usual pipeline</strong> is linked list of jobs will run on every commit.</p>
+<p><strong>Trigger only pipeline</strong> is linked list of jobs will run only when pipeline is triggered from a webhook. We will configure Pact broker to trigger provider pipeline whenever a new version of contract published from its consumers. Trigger only pipeline consists of a single step, which will try to verify a specific version of a consumer contract.</p>
+<p>Let’s try to simulate the behavior of the design!</p>
+<p><strong><em>On a commit to consumer repository:</em></strong></p>
+<ul>
+<li>Running the consumer tests stage will generate the new contract files, pipeline will publish the generated contract files to broker on next stage.</li>
+<li>When a new contract received from broker, it will trigger provider pipeline with sending contract version, provider tests will run to verify this specific version of contract and send the results back to broker -<em>in the meantime consumer pipeline continues to run</em>-.</li>
+<li>When consumer arrives to “<em>can i deploy to prod”</em> stage, it sends a request to broker to receive the result of provider verification. If contract is verified by provider, pipeline continues to next stage, otherwise it will break to prevent deploy.</li>
+<li>After we ran deployment stage we are tagging this version of contract as “prod”.</li>
+</ul>
+<p><strong><em>On a commit to provider repository:</em></strong></p>
+<ul>
+<li>On provider test stage, provider will fetch all contract files belongs to it and tagged with “prod” tag. This means that provider will try to validate itself against whats already on production environment. By this way we will prevent blocking provider pipeline for contracts which is not on live yet. If provider verifies the contracts successfully, it means that we are ready to ship!</li>
+</ul>
+<p>Validating this behavior with the test cases above is left as an exercise to the reader. If you find any edge case or a case which doesn’t satisfies the defined goals, please comment below to discuss.</p>
+<blockquote>
+<p>If it hurts, do it more frequently, and bring the pain forward.<br>
+— Jez Humble</p>
+</blockquote>
+</div>
+</div>
+</main>
+</div><div id=footer>
+<div class=copyright>
+Copyright 2021
+</div>
+</div></body>
+</html>
