@@ -1,0 +1,8 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+title = ""
+theme = "leaneon"
+copyright = "Copyright {year}"
+
+[permalinks]
+  blog = "/:filename/"
