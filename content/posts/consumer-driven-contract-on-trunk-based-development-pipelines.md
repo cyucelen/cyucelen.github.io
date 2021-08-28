@@ -49,7 +49,7 @@ There are ways of implementing this flow with feature branch approach, but in th
 
 To keep it simple, following example will represent 1 consumer, 1 provider service and single environment to deploy but it works on any number of consumers and providers and environments.
 
-![](https://miro.medium.com/max/1400/1*cIztAm6XsnAzubtEW8RHcA.png)
+![](/img/cdc-pipelines.png)
 
 To elaborate the legend of the above diagram, let’s define what usual and trigger only pipeline means.
 
