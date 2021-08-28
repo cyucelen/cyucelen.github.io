@@ -47,7 +47,7 @@
 <h1 id=design-of-the-pipelines>Design of the pipelines</h1>
 <p>There are ways of implementing this flow with feature branch approach, but in this section we will try to define a way to achieve same flow for <a href=https://trunkbaseddevelopment.com/>trunk based development.</a></p>
 <p>To keep it simple, following example will represent 1 consumer, 1 provider service and single environment to deploy but it works on any number of consumers and providers and environments.</p>
-<p><img src=https://miro.medium.com/max/1400/1*cIztAm6XsnAzubtEW8RHcA.png alt></p>
+<p><img src=/img/cdc-pipelines.png alt></p>
 <p>To elaborate the legend of the above diagram, let’s define what usual and trigger only pipeline means.</p>
 <p><strong>Usual pipeline</strong> is linked list of jobs will run on every commit.</p>
 <p><strong>Trigger only pipeline</strong> is linked list of jobs will run only when pipeline is triggered from a webhook. We will configure Pact broker to trigger provider pipeline whenever a new version of contract published from its consumers. Trigger only pipeline consists of a single step, which will try to verify a specific version of a consumer contract.</p>
@@ -71,7 +71,7 @@
 </div>
 </div>
 </main>
-</div><div id=footer>
+</div><div id=footer class=container>
 <div class=copyright>
 Copyright 2021
 </div>

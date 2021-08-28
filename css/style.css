@@ -59,10 +59,12 @@ blockquote {
   width: 100%;
   border: solid 2px #9b2eff;
   box-shadow: 15px 15px 0 0 #280046;
+  box-sizing: border-box;
 }
 
 blockquote h1 {
   font-size: 20px;
+  line-height: 24px !important;
   color: #76eaf2;
 }
 
@@ -94,14 +96,19 @@ strong {
   padding: 0 0 8px 0;
 }
 
+.post-container h1 {
+  line-height: 42px;
+}
+
 a.logo-link {
   color: var(--text-color);
   text-decoration: none;
 }
 
 .container {
-  width: 768px;
+  width: 748px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
 #content-area {
@@ -277,5 +284,39 @@ hr:after {
   }
   100% {
     background-position: 200%;
+  }
+}
+
+
+@media only screen and (max-width: 767px) {
+  .container {
+    width: 460px;
+  }
+}
+
+@media only screen and (max-width: 470px) {
+  .container {
+    width: 340px;
+    padding: 0 10px;
+  }
+
+  .post-content {
+    line-height: 28px;
+  }
+
+  .post-content p {
+    line-height: 28px;
+  }
+
+  .post-content li {
+    line-height: 28px;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .container {
+    width: 272px;
+    font-size: 18px;
+    padding: 0 24px;
   }
 }
