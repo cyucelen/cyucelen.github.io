@@ -287,7 +287,6 @@ hr:after {
   }
 }
 
-
 @media only screen and (max-width: 767px) {
   .container {
     width: 460px;
@@ -319,4 +318,16 @@ hr:after {
     font-size: 18px;
     padding: 0 24px;
   }
+}
+
+div.highlight {
+  background: black;
+  box-sizing: border-box;
+  padding: 12px;
+  margin: 50px auto;
+  width: 100%;
+  border: solid 2px #0014ff;
+  box-shadow: 15px 15px 0 0 #000a3a;
+  font-size: 14px;
+  overflow-x: scroll;
 }
